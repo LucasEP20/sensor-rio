@@ -1,0 +1,157 @@
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#include <Servo.h>
+
+//Configuracion de red
+const char* ssid="UTN FRVM"; //nombre de la red donde trabajas
+const char* password="utnfrvm26"; //contraseña
+const char* serverUrl="http://000.000.000.000:3000/api/rio"; //poner la ip de la pc donde corre el servidor
+
+// --- PINES DE HARDWARE ---
+const int pinSensorMax = D1; // GPIO 5  -> Nivel Máximo (Desborde)
+const int pinBuzzer    = D2; // GPIO 4  -> Buzzer
+const int pinSensorMin = D5; // GPIO 14 -> Nivel Mínimo (Sequía)
+const int pinServo     = D6; // GPIO 12 -> Servomotor SG90
+
+// --- ÁNGULOS DE LA COMPUERTA (Calibrables según tu maqueta) ---
+const int ANGULO_CERRADO = 0;   // Nivel bajo: totalmente cerrada
+const int ANGULO_NORMAL  = 35;  // Nivel normal: casi cerrada (caudal mínimo)
+const int ANGULO_ABIERTO = 110; // Nivel alto: abierta para desagote
+
+Servo compuerta;
+
+// Variables de control
+unsigned long tiempoAnteriorBuzzer = 0;
+unsigned long tiempoInicioSequia   = 0;
+unsigned long tiempoUltimoEnvio    = 0;
+
+int anguloActual         = -1;
+bool buzzerSonando       = false;
+bool alertaDesbordePrev  = false;
+bool alertaSequiaEmitida = false;
+
+String estadoActual = "NORMAL";
+String estadoPrevio = "";
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(pinSensorMax, INPUT_PULLUP);
+  pinMode(pinSensorMin, INPUT_PULLUP);
+  pinMode(pinBuzzer, OUTPUT);
+  noTone(pinBuzzer);
+
+  // Arranca en posición normal (casi cerrada)
+  compuerta.attach(pinServo);
+  compuerta.write(ANGULO_NORMAL);
+  anguloActual = ANGULO_NORMAL;
+
+  // Conexión a Wi-Fi
+  Serial.print("\nConectando a Wi-Fi");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWi-Fi conectado! IP del NodeMCU: " + WiFi.localIP().toString());
+}
+
+void loop() {
+  int estadoMax = digitalRead(pinSensorMax);
+  int estadoMin = digitalRead(pinSensorMin);
+  unsigned long tiempoActual = millis();
+
+  int nivelSimulado  = 50;
+  int anguloObjetivo = ANGULO_NORMAL;
+
+  // 1. EVALUACIÓN DE NIVELES, ÁNGULO DE COMPUERTA Y ALARMA SONORA
+  if (estadoMax == LOW) {
+    // --- NIVEL MÁXIMO (D1): Abre compuerta + Alarma 1s ON / 1s OFF ---
+    estadoActual        = "ALTO";
+    nivelSimulado       = 95;
+    anguloObjetivo      = ANGULO_ABIERTO;
+    alertaSequiaEmitida = false;
+
+    if (!alertaDesbordePrev) {
+      alertaDesbordePrev   = true;
+      buzzerSonando        = true;
+      tiempoAnteriorBuzzer = tiempoActual;
+      tone(pinBuzzer, 2400);
+    } else if (tiempoActual - tiempoAnteriorBuzzer >= 1000) {
+      tiempoAnteriorBuzzer = tiempoActual;
+      buzzerSonando        = !buzzerSonando;
+      buzzerSonando ? tone(pinBuzzer, 2400) : noTone(pinBuzzer);
+    }
+
+  } else if (estadoMin == LOW) {
+    // --- NIVEL BAJO (D5): Cierra compuerta total + Pitido corto 400ms ---
+    estadoActual       = "BAJO";
+    nivelSimulado      = 15;
+    anguloObjetivo     = ANGULO_CERRADO;
+    alertaDesbordePrev = false;
+
+    if (!alertaSequiaEmitida) {
+      alertaSequiaEmitida = true;
+      buzzerSonando       = true;
+      tiempoInicioSequia  = tiempoActual;
+      tone(pinBuzzer, 2400);
+    } else if (buzzerSonando && (tiempoActual - tiempoInicioSequia >= 400)) {
+      buzzerSonando = false;
+      noTone(pinBuzzer);
+    }
+
+  } else {
+    // --- NIVEL NORMAL: Compuerta casi cerrada + Silencio ---
+    estadoActual   = "NORMAL";
+    nivelSimulado  = 50;
+    anguloObjetivo = ANGULO_NORMAL;
+
+    if (alertaDesbordePrev || alertaSequiaEmitida || buzzerSonando) {
+      alertaDesbordePrev  = false;
+      alertaSequiaEmitida = false;
+      buzzerSonando       = false;
+      noTone(pinBuzzer);
+    }
+  }
+
+  // 2. MOVER SERVO SOLO SI CAMBIÓ EL ÁNGULO OBJETIVO
+  if (anguloObjetivo != anguloActual) {
+    compuerta.write(anguloObjetivo);
+    anguloActual = anguloObjetivo;
+    Serial.println(">>> Servo movido a: " + String(anguloActual) + " grados (" + estadoActual + ")");
+  }
+
+  // 3. ENVÍO DE DATOS IOT (Al cambiar de estado o cada 3 segundos)
+  bool cambioDeEstado = (estadoActual != estadoPrevio);
+  if (cambioDeEstado || (tiempoActual - tiempoUltimoEnvio >= 3000)) {
+    estadoPrevio      = estadoActual;
+    tiempoUltimoEnvio = tiempoActual;
+    enviarDatosServidor(estadoActual, nivelSimulado, anguloActual);
+  }
+}
+
+void enviarDatosServidor(String estado, int nivel, int angulo) {
+  if (WiFi.status() == WL_CONNECTED) {
+    WiFiClient client;
+    HTTPClient http;
+
+    http.setTimeout(800);
+    http.begin(client, serverUrl);
+    http.addHeader("Content-Type", "application/json");
+
+    String jsonPayload = "{";
+    jsonPayload += "\"estado\":\"" + estado + "\",";
+    jsonPayload += "\"nivel\":" + String(nivel) + ",";
+    jsonPayload += "\"angulo\":" + String(angulo);
+    jsonPayload += "}";
+
+    int httpCode = http.POST(jsonPayload);
+    if (httpCode > 0) {
+      Serial.println("[IoT OK] Enviado: " + jsonPayload);
+    } else {
+      Serial.println("[IoT Error] No se pudo contactar al servidor");
+    }
+    http.end();
+  }
+}

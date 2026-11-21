@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCADA Hidrológico - Control de Nivel de Río IoT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-base: #070d19;
+      --bg-panel: #0f172a;
+      --bg-card: #131c31;
+      --border-subtle: rgba(148, 163, 184, 0.14);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-cyan: #38bdf8;
+      --accent-blue: #0284c7;
+      --emerald: #10b981;
+      --emerald-bg: rgba(16, 185, 129, 0.12);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.14);
+      --crimson: #ef4444;
+      --crimson-bg: rgba(239, 68, 68, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 45%),
+        linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 22px;
+    }
+
+    .dashboard {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* HEADER */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 16px 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
+      font-size: 1.4rem;
+    }
+
+    .brand h1 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    .status-pills {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulse-dot 1.8s infinite;
+    }
+
+    .dot.offline {
+      background: var(--crimson);
+      box-shadow: 0 0 10px var(--crimson);
+      animation: none;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.65; }
+    }
+
+    /* BANNER DE ALERTA */
+    .alert-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 24px;
+      border-radius: 16px;
+      border: 1px solid;
+      transition: all 0.35s ease;
+    }
+
+    .alert-banner.normal {
+      background: linear-gradient(90deg, rgba(6, 78, 59, 0.65), rgba(15, 23, 42, 0.9));
+      border-color: rgba(16, 185, 129, 0.45);
+      box-shadow: 0 8px 30px rgba(16, 185, 129, 0.08);
+    }
+
+    .alert-banner.bajo {
+      background: linear-gradient(90deg, rgba(120, 53, 15, 0.75), rgba(15, 23, 42, 0.92));
+      border-color: rgba(245, 158, 11, 0.6);
+      box-shadow: 0 8px 30px rgba(245, 158, 11, 0.14);
+    }
+
+    .alert-banner.alto {
+      background: linear-gradient(90deg, rgba(127, 29, 29, 0.85), rgba(15, 23, 42, 0.95));
+      border-color: rgba(239, 68, 68, 0.8);
+      box-shadow: 0 8px 35px rgba(239, 68, 68, 0.25);
+      animation: alert-flash 1.4s infinite;
+    }
+
+    @keyframes alert-flash {
+      0%, 100% { border-color: rgba(239, 68, 68, 0.9); }
+      50% { border-color: rgba(239, 68, 68, 0.3); }
+    }
+
+    .alert-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .alert-icon {
+      font-size: 1.9rem;
+      line-height: 1;
+    }
+
+    .alert-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .alert-desc {
+      font-size: 0.86rem;
+      color: #cbd5e1;
+      margin-top: 3px;
+    }
+
+    .alert-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.35);
+      white-space: nowrap;
+    }
+
+    /* TARJETAS KPI */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 960px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 540px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+
+    .kpi-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .kpi-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 32%;
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+      border-radius: 999px;
+      transition: width 0.5s ease, background 0.3s ease;
+    }
+
+    .sensor-leds {
+      display: flex;
+      gap: 10px;
+      margin-top: 2px;
+    }
+
+    .led-tag {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: #1e293b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border: 1px solid transparent;
+      transition: all 0.25s ease;
+    }
+
+    .led-tag.active-max {
+      background: var(--crimson-bg);
+      color: #fca5a5;
+      border-color: var(--crimson);
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+    }
+
+    .led-tag.active-min {
+      background: var(--amber-bg);
+      color: #fcd34d;
+      border-color: var(--amber);
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+    }
+
+    /* ZONA CENTRAL: GRÁFICO + VISUALIZADOR DE COMPUERTA */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.75fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 960px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title h2 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .panel-title span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 310px;
+      width: 100%;
+    }
+
+    /* SIMULADOR VISUAL DEL CANAL Y COMPUERTA */
+    .channel-box {
+      position: relative;
+      height: 310px;
+      background: linear-gradient(180deg, #0b1324 0%, #0f172a 100%);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    /* Marcas de cota en el tanque */
+    .level-marker {
+      position: absolute;
+      left: 0;
+      right: 0;
+      border-top: 1px dashed;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      padding: 2px 10px;
+      z-index: 4;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .marker-max {
+      bottom: 86%;
+      border-color: rgba(239, 68, 68, 0.65);
+      color: #fca5a5;
+    }
+
+    .marker-norm {
+      bottom: 45%;
+      border-color: rgba(56, 189, 248, 0.45);
+      color: #7dd3fc;
+    }
+
+    .marker-min {
+      bottom: 14%;
+      border-color: rgba(245, 158, 11, 0.65);
+      color: #fcd34d;
+    }
+
+    /* Agua animada */
+    .water-body {
+      width: 100%;
+      height: 45%;
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.78) 0%, rgba(2, 132, 199, 0.92) 100%);
+      position: relative;
+      transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.5s ease;
+      z-index: 2;
+      box-shadow: 0 -4px 25px rgba(56, 189, 248, 0.4);
+    }
+
+    .water-body.alto {
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.82) 0%, rgba(185, 28, 28, 0.95) 100%);
+      box-shadow: 0 -4px 30px rgba(239, 68, 68, 0.5);
+    }
+
+    .water-body.bajo {
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.78) 0%, rgba(180, 83, 9, 0.92) 100%);
+      box-shadow: 0 -4px 20px rgba(245, 158, 11, 0.4);
+    }
+
+    .water-surface {
+      position: absolute;
+      top: -6px;
+      left: 0;
+      width: 200%;
+      height: 12px;
+      background: repeating-radial-gradient(circle at 12px 6px, rgba(255,255,255,0.45) 0, rgba(255,255,255,0.45) 4px, transparent 5px, transparent 24px);
+      animation: wave-slide 3s linear infinite;
+    }
+
+    @keyframes wave-slide {
+      from { transform: translateX(0); }
+      to { transform: translateX(-48px); }
+    }
+
+    /* Estructura de dique y compuerta SG90 */
+    .dam-wall {
+      position: absolute;
+      right: 26%;
+      top: 0;
+      height: 56%;
+      width: 14px;
+      background: #334155;
+      border-left: 2px solid #475569;
+      border-right: 2px solid #1e293b;
+      z-index: 3;
+    }
+
+    .servo-hinge {
+      position: absolute;
+      right: calc(26% - 4px);
+      top: 55%;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      border: 4px solid #0f172a;
+      z-index: 6;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    }
+
+    .gate-arm {
+      position: absolute;
+      right: calc(26% + 3px);
+      top: 57%;
+      width: 8px;
+      height: 43%;
+      background: linear-gradient(180deg, #f8fafc, #94a3b8);
+      border-radius: 4px;
+      transform-origin: top center;
+      transform: rotate(-28deg);
+      transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 5;
+      box-shadow: 0 0 14px rgba(0, 0, 0, 0.6);
+    }
+
+    .gate-label {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      z-index: 7;
+    }
+
+    /* BITÁCORA DE EVENTOS */
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 150px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+
+    .log-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    .log-item.ALTO { border-left-color: var(--crimson); }
+    .log-item.BAJO { border-left-color: var(--amber); }
+    .log-item.NORMAL { border-left-color: var(--emerald); }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- BARRA SUPERIOR -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">🌊</div>
+        <div>
+          <h1>MONITOR HIDROLÓGICO & COMPUERTA IoT</h1>
+          <p>NODO: ESP8266-CP2102 // CONTROL DE NIVEL AUTOMATIZADO</p>
+        </div>
+      </div>
+      <div class="status-pills">
+        <div class="pill">
+          <span id="conn-dot" class="dot"></span>
+          <span id="conn-text">CONECTADO • ESP8266</span>
+        </div>
+        <div class="pill">
+          <span>SYNC:</span>
+          <span id="txt-hora">--:--:--</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- BANNER DINÁMICO DE ALERTA -->
+    <section id="alerta" class="alert-banner normal">
+      <div class="alert-left">
+        <div id="alerta-icono" class="alert-icon">✅</div>
+        <div>
+          <div id="alerta-titulo" class="alert-title">CAUDAL ESTABLE — OPERACIÓN NORMAL</div>
+          <div id="alerta-desc" class="alert-desc">Nivel dentro de cotas seguras. Compuerta regulando caudal mínimo.</div>
+        </div>
+      </div>
+      <div id="alerta-badge" class="alert-badge">SISTEMA NOMINAL</div>
+    </section>
+
+    <!-- TARJETAS KPI -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span>Cota del Río</span>
+          <span>NIVEL</span>
+        </div>
+        <div id="txt-nivel" class="kpi-value">50 cm</div>
+        <div class="kpi-sub">Estado: <strong id="txt-estado-badge" style="color: #10b981;">NORMAL</strong></div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span>Compuerta SG90</span>
+          <span id="txt-porcentaje">32% APERTURA</span>
+        </div>
+        <div id="txt-compuerta" class="kpi-value">35°</div>
+        <div class="progress-track">
+          <div id="servo-bar" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span>Alarma Sonora</span>
+          <span>KY-012</span>
+        </div>
+        <div id="txt-buzzer" class="kpi-value" style="font-size: 1.35rem;">SILENCIADA</div>
+        <div id="txt-buzzer-sub" class="kpi-sub">Sin advertencias acústicas activas</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span>Sensores Hall</span>
+          <span>KY-003</span>
+        </div>
+        <div class="sensor-leds">
+          <div id="led-d1" class="led-tag">● D1 MAX</div>
+          <div id="led-d5" class="led-tag">● D5 MIN</div>
+        </div>
+        <div id="txt-sensor-sub" class="kpi-sub">Ningún sensor magnético activado</div>
+      </div>
+    </section>
+
+    <!-- GRÁFICO EVOLUTIVO + VISUALIZADOR FÍSICO DEL CANAL -->
+    <section class="main-grid">
+      <div class="panel">
+        <div class="panel-title">
+          <h2>Evolución Temporal del Nivel del Agua (cm)</h2>
+          <span>VENTANA MÓVIL • 25 LECTURAS</span>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="graficoRio"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">
+          <h2>Corte de Canal y Compuerta</h2>
+          <span>TIEMPO REAL</span>
+        </div>
+        <div class="channel-box">
+          <div class="level-marker marker-max"><span>COTA DESBORDE (D1)</span><span>95 cm</span></div>
+          <div class="level-marker marker-norm"><span>CAUDAL BASE</span><span>50 cm</span></div>
+          <div class="level-marker marker-min"><span>COTA SEQUÍA (D5)</span><span>15 cm</span></div>
+
+          <div class="dam-wall"></div>
+          <div class="servo-hinge"></div>
+          <div id="gate-arm" class="gate-arm"></div>
+
+          <div id="water-body" class="water-body">
+            <div class="water-surface"></div>
+          </div>
+
+          <div id="gate-label" class="gate-label">SERVO: 35° (SEMI-ABIERTA)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BITÁCORA DE CAMBIOS DE ESTADO -->
+    <section class="panel">
+      <div class="panel-title">
+        <h2>Bitácora de Eventos del Sistema</h2>
+        <span>REGISTRO AUTOMÁTICO DE TRANSICIONES</span>
+      </div>
+      <div id="log-list" class="log-list"></div>
+    </section>
+  </div>
+
+  <script>
+    // Plugin personalizado en Chart.js para dibujar líneas umbral de Desborde y Sequía
+    const thresholdLinesPlugin = {
+      id: 'thresholdLines',
+      beforeDatasetsDraw(chart) {
+        const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+        ctx.save();
+
+        // Línea de Desborde (95 cm)
+        const yMax = y.getPixelForValue(95);
+        ctx.beginPath();
+        ctx.setLineDash([6, 6]);
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.65)';
+        ctx.moveTo(left, yMax);
+        ctx.lineTo(right, yMax);
+        ctx.stroke();
+
+        // Línea de Sequía (15 cm)
+        const yMin = y.getPixelForValue(15);
+        ctx.beginPath();
+        ctx.setLineDash([6, 6]);
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.65)';
+        ctx.moveTo(left, yMin);
+        ctx.lineTo(right, yMin);
+        ctx.stroke();
+
+        ctx.restore();
+      }
+    };
+
+    const ctx = document.getElementById('graficoRio').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 310);
+    gradient.addColorStop(0, 'rgba(56, 189, 248, 0.38)');
+    gradient.addColorStop(1, 'rgba(56, 189, 248, 0.01)');
+
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Nivel del Río (cm)',
+          data: [],
+          borderColor: '#38bdf8',
+          backgroundColor: gradient,
+          borderWidth: 3,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: [],
+          pointBorderColor: '#0f172a',
+          pointBorderWidth: 2,
+          fill: true,
+          tension: 0.35
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 110,
+            ticks: {
+              color: '#94a3b8',
+              font: { family: 'JetBrains Mono', size: 11 },
+              callback: (val) => `${val} cm`
+            },
+            grid: { color: 'rgba(148, 163, 184, 0.08)' }
+          },
+          x: {
+            ticks: {
+              color: '#94a3b8',
+              font: { family: 'JetBrains Mono', size: 11 },
+              maxRotation: 0
+            },
+            grid: { display: false }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#0f172a',
+            titleColor: '#94a3b8',
+            bodyColor: '#f8fafc',
+            borderColor: 'rgba(56, 189, 248, 0.35)',
+            borderWidth: 1,
+            padding: 10,
+            displayColors: false,
+            callbacks: {
+              label: (context) => `Cota registrada: ${context.parsed.y} cm`
+            }
+          }
+        }
+      },
+      plugins: [thresholdLinesPlugin]
+    });
+
+    let ultimoEstadoRegistrado = null;
+
+    function registrarEvento(hora, estado, nivel, angulo) {
+      const lista = document.getElementById('log-list');
+      const item = document.createElement('div');
+      item.className = `log-item ${estado}`;
+
+      let detalle = `Caudal normalizado (${nivel} cm) — Compuerta a ${angulo}°`;
+      if (estado === 'ALTO') detalle = `⚠️ DESBORDE DETECTADO (${nivel} cm) — Compuerta abierta a ${angulo}°`;
+      if (estado === 'BAJO') detalle = `⚠️ SEQUÍA DETECTADA (${nivel} cm) — Compuerta cerrada a ${angulo}°`;
+
+      item.innerHTML = `<span>${detalle}</span><span style="color:#94a3b8">${hora}</span>`;
+      lista.prepend(item);
+
+      while (lista.children.length > 8) {
+        lista.removeChild(lista.lastChild);
+      }
+    }
+
+    async function actualizarDashboard() {
+      try {
+        const res = await fetch('/api/rio');
+        const data = await res.json();
+        const actual = data.actual;
+
+        // Estado de conexión OK
+        document.getElementById('conn-dot').classList.remove('offline');
+        document.getElementById('conn-text').textContent = 'CONECTADO • ESP8266';
+
+        const estado = actual.estado || 'NORMAL';
+        const nivel  = actual.nivel ?? 50;
+        const angulo = actual.angulo ?? 35;
+
+        // 1. Actualizar Banner Principal
+        const banner = document.getElementById('alerta');
+        banner.className = 'alert-banner';
+
+        if (estado === 'ALTO') {
+          banner.classList.add('alto');
+          document.getElementById('alerta-icono').textContent = '🚨';
+          document.getElementById('alerta-titulo').textContent = 'ALERTA DE INUNDACIÓN — COTA MÁXIMA SUPERADA';
+          document.getElementById('alerta-desc').textContent = 'Sensor D1 activado. Compuerta abierta para evacuación y sirena intermitente activa.';
+          document.getElementById('alerta-badge').textContent = 'EMERGENCIA DESBORDE';
+        } else if (estado === 'BAJO') {
+          banner.classList.add('bajo');
+          document.getElementById('alerta-icono').textContent = '⚠️';
+          document.getElementById('alerta-titulo').textContent = 'ADVERTENCIA DE SEQUÍA — NIVEL CRÍTICO BAJO';
+          document.getElementById('alerta-desc').textContent = 'Sensor D5 activado. Compuerta cerrada totalmente (0°) para retención de caudal.';
+          document.getElementById('alerta-badge').textContent = 'ALERTA SEQUÍA';
+        } else {
+          banner.classList.add('normal');
+          document.getElementById('alerta-icono').textContent = '✅';
+          document.getElementById('alerta-titulo').textContent = 'CAUDAL ESTABLE — OPERACIÓN NORMAL';
+          document.getElementById('alerta-desc').textContent = 'Nivel dentro de cotas seguras. Compuerta regulando caudal base.';
+          document.getElementById('alerta-badge').textContent = 'SISTEMA NOMINAL';
+        }
+
+        // 2. Actualizar Tarjetas KPI
+        document.getElementById('txt-nivel').textContent = `${nivel} cm`;
+        const estadoBadge = document.getElementById('txt-estado-badge');
+        estadoBadge.textContent = estado;
+        estadoBadge.style.color = estado === 'ALTO' ? '#ef4444' : (estado === 'BAJO' ? '#f59e0b' : '#10b981');
+
+        const porcentaje = Math.min(100, Math.round((angulo / 110) * 100));
+        document.getElementById('txt-compuerta').textContent = `${angulo}°`;
+        document.getElementById('txt-porcentaje').textContent = `${porcentaje}% APERTURA`;
+        const servoBar = document.getElementById('servo-bar');
+        servoBar.style.width = `${porcentaje}%`;
+        servoBar.style.background = estado === 'ALTO'
+          ? 'linear-gradient(90deg, #dc2626, #f87171)'
+          : (estado === 'BAJO' ? '#64748b' : 'linear-gradient(90deg, #0284c7, #38bdf8)');
+
+        // Buzzer & LEDs de Sensores Hall
+        const ledD1 = document.getElementById('led-d1');
+        const ledD5 = document.getElementById('led-d5');
+        ledD1.className = 'led-tag';
+        ledD5.className = 'led-tag';
+
+        if (estado === 'ALTO') {
+          document.getElementById('txt-buzzer').textContent = 'SIRENA 1s/1s';
+          document.getElementById('txt-buzzer').style.color = '#ef4444';
+          document.getElementById('txt-buzzer-sub').textContent = 'Tono continuo intermitente (2400 Hz)';
+          ledD1.classList.add('active-max');
+          document.getElementById('txt-sensor-sub').textContent = 'Imán detectado en Nivel Máximo (D1)';
+        } else if (estado === 'BAJO') {
+          document.getElementById('txt-buzzer').textContent = 'PULSO CORTO';
+          document.getElementById('txt-buzzer').style.color = '#f59e0b';
+          document.getElementById('txt-buzzer-sub').textContent = 'Aviso acústico breve emitido (400 ms)';
+          ledD5.classList.add('active-min');
+          document.getElementById('txt-sensor-sub').textContent = 'Imán detectado en Nivel Mínimo (D5)';
+        } else {
+          document.getElementById('txt-buzzer').textContent = 'SILENCIADA';
+          document.getElementById('txt-buzzer').style.color = '#f1f5f9';
+          document.getElementById('txt-buzzer-sub').textContent = 'Sin advertencias acústicas activas';
+          document.getElementById('txt-sensor-sub').textContent = 'Ningún sensor magnético activado';
+        }
+
+        document.getElementById('txt-hora').textContent = actual.hora;
+
+        // 3. Actualizar Visualizador Físico del Canal y Compuerta
+        const waterBody = document.getElementById('water-body');
+        waterBody.className = 'water-body';
+        if (estado === 'ALTO') waterBody.classList.add('alto');
+        if (estado === 'BAJO') waterBody.classList.add('bajo');
+        waterBody.style.height = `${Math.min(95, Math.max(10, (nivel / 110) * 100))}%`;
+
+        // Rotación visual de la compuerta: 0° = vertical (0deg CSS), 35° = -28deg, 110° = -85deg
+        const cssAngle = -Math.round((angulo / 110) * 85);
+        document.getElementById('gate-arm').style.transform = `rotate(${cssAngle}deg)`;
+        let etiquetaServo = `SERVO: ${angulo}° (SEMI-ABIERTA)`;
+        if (angulo === 0) etiquetaServo = 'SERVO: 0° (CERRADA TOTAL)';
+        else if (angulo >= 90) etiquetaServo = `SERVO: ${angulo}° (ABIERTA MÁX)`;
+        document.getElementById('gate-label').textContent = etiquetaServo;
+
+        // 4. Registrar transición en Bitácora si cambió el estado
+        if (ultimoEstadoRegistrado !== estado) {
+          ultimoEstadoRegistrado = estado;
+          registrarEvento(actual.hora, estado, nivel, angulo);
+        }
+
+        // 5. Actualizar Gráfico
+        chart.data.labels = data.historial.map(item => item.hora);
+        chart.data.datasets[0].data = data.historial.map(item => item.nivel);
+        chart.data.datasets[0].pointBackgroundColor = data.historial.map(item => {
+          if (item.estado === 'ALTO') return '#ef4444';
+          if (item.estado === 'BAJO') return '#f59e0b';
+          return '#38bdf8';
+        });
+        chart.update('none');
+
+      } catch (err) {
+        document.getElementById('conn-dot').classList.add('offline');
+        document.getElementById('conn-text').textContent = 'SIN CONEXIÓN AL SERVIDOR';
+        console.error('Error obteniendo datos del servidor:', err);
+      }
+    }
+
+    setInterval(actualizarDashboard, 1200);
+    actualizarDashboard();
+  </script>
+</body>
+</html>
