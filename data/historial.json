@@ -1,0 +1,32 @@
+{
+  "historial": [
+    {
+      "hora": "06:11:03",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 35
+    }
+  ],
+  "eventos": [
+    {
+      "hora": "06:39:04",
+      "tipo": "NORMAL",
+      "mensaje": "✨ DIAGNÓSTICO IA: Evaluación hidrológica y pluvial generada con Gemini"
+    },
+    {
+      "hora": "06:11:53",
+      "tipo": "NORMAL",
+      "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"AUTO\""
+    },
+    {
+      "hora": "06:11:43",
+      "tipo": "NORMAL",
+      "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"ABRIR\""
+    },
+    {
+      "hora": "06:11:36",
+      "tipo": "NORMAL",
+      "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"CERRAR\""
+    }
+  ]
+}
