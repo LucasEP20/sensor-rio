@@ -14,25 +14,34 @@ const int pinBuzzer    = D2; // GPIO 4  -> Buzzer
 const int pinSensorMin = D5; // GPIO 14 -> Nivel Mínimo (Sequía)
 const int pinServo     = D6; // GPIO 12 -> Servomotor SG90
 
-// --- ÁNGULOS DE LA COMPUERTA (Calibrables según tu maqueta) ---
-const int ANGULO_CERRADO = 0;   // Nivel bajo: totalmente cerrada
-const int ANGULO_NORMAL  = 35;  // Nivel normal: casi cerrada (caudal mínimo)
-const int ANGULO_ABIERTO = 110; // Nivel alto: abierta para desagote
+// --- ÁNGULOS DE COMPUERTA ---
+const int ANGULO_CERRADO    = 0;
+const int ANGULO_NORMAL     = 35;
+const int ANGULO_FALLA_SEG  = 45;  // Posición segura si fallan los sensores
+const int ANGULO_ABIERTO    = 110;
+
+// --- FILTRO ANTI-OLEAJE (2 segundos sostenidos para confirmar cambio) ---
+const unsigned long TIEMPO_CONFIRMACION_MS = 2000;
 
 Servo compuerta;
 
-// Variables de control
+// Variables de estado y debounce
+String estadoCrudoPrevio    = "NORMAL";
+String estadoConfirmado     = "NORMAL";
+String estadoEnviadoPrevio  = "";
+String modoControl          = "AUTO"; // "AUTO", "ABRIR", "CERRAR"
+String motivoReinicio       = "";
+
+unsigned long tiempoCambioCrudo    = 0;
 unsigned long tiempoAnteriorBuzzer = 0;
 unsigned long tiempoInicioSequia   = 0;
 unsigned long tiempoUltimoEnvio    = 0;
 
 int anguloActual         = -1;
+int pasoPitidoFalla      = 0;
 bool buzzerSonando       = false;
 bool alertaDesbordePrev  = false;
 bool alertaSequiaEmitida = false;
-
-String estadoActual = "NORMAL";
-String estadoPrevio = "";
 
 void setup() {
   Serial.begin(115200);
@@ -42,33 +51,75 @@ void setup() {
   pinMode(pinBuzzer, OUTPUT);
   noTone(pinBuzzer);
 
-  // Arranca en posición normal (casi cerrada)
+  // Guardamos el motivo del último reinicio (útil para detectar caídas por el servo)
+  motivoReinicio = ESP.getResetReason();
+
   compuerta.attach(pinServo);
   compuerta.write(ANGULO_NORMAL);
   anguloActual = ANGULO_NORMAL;
 
-  // Conexión a Wi-Fi
   Serial.print("\nConectando a Wi-Fi");
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("\nWi-Fi conectado! IP del NodeMCU: " + WiFi.localIP().toString());
+  Serial.println("\nWi-Fi conectado! IP: " + WiFi.localIP().toString());
+  Serial.println("Motivo de arranque: " + motivoReinicio);
 }
 
 void loop() {
+  unsigned long tiempoActual = millis();
   int estadoMax = digitalRead(pinSensorMax);
   int estadoMin = digitalRead(pinSensorMin);
-  unsigned long tiempoActual = millis();
 
+  // 1. LECTURA CRUDA Y DETECCIÓN DE FALLA IMPOSIBLE (Ambos Hall en LOW)
+  String estadoCrudo = "NORMAL";
+  if (estadoMax == LOW && estadoMin == LOW) {
+    estadoCrudo = "FALLA_SENSOR";
+  } else if (estadoMax == LOW) {
+    estadoCrudo = "ALTO";
+  } else if (estadoMin == LOW) {
+    estadoCrudo = "BAJO";
+  }
+
+  // 2. FILTRO ANTI-OLEAJE (Debounce temporal)
+  if (estadoCrudo != estadoCrudoPrevio) {
+    estadoCrudoPrevio = estadoCrudo;
+    tiempoCambioCrudo = tiempoActual; // Reinicia el cronómetro si hubo rebote u ola
+  }
+
+  // Solo confirma el nuevo estado si se mantuvo estable durante TIEMPO_CONFIRMACION_MS
+  if ((tiempoActual - tiempoCambioCrudo) >= TIEMPO_CONFIRMACION_MS) {
+    if (estadoConfirmado != estadoCrudo) {
+      estadoConfirmado = estadoCrudo;
+      Serial.println(">>> ESTADO CONFIRMADO (Estable 2s): " + estadoConfirmado);
+    }
+  }
+
+  // 3. DETERMINAR NIVEL, ÁNGULO Y ALARMA SEGÚN ESTADO CONFIRMADO
   int nivelSimulado  = 50;
   int anguloObjetivo = ANGULO_NORMAL;
 
-  // 1. EVALUACIÓN DE NIVELES, ÁNGULO DE COMPUERTA Y ALARMA SONORA
-  if (estadoMax == LOW) {
-    // --- NIVEL MÁXIMO (D1): Abre compuerta + Alarma 1s ON / 1s OFF ---
-    estadoActual        = "ALTO";
+  if (estadoConfirmado == "FALLA_SENSOR") {
+    nivelSimulado       = 50;
+    anguloObjetivo      = ANGULO_FALLA_SEG;
+    alertaDesbordePrev  = false;
+    alertaSequiaEmitida = false;
+
+    // Patrón de alarma de falla: 3 pitidos cortos cada 2 segundos
+    if (tiempoActual - tiempoAnteriorBuzzer >= 250) {
+      tiempoAnteriorBuzzer = tiempoActual;
+      pasoPitidoFalla = (pasoPitidoFalla + 1) % 8;
+      if (pasoPitidoFalla == 0 || pasoPitidoFalla == 2 || pasoPitidoFalla == 4) {
+        tone(pinBuzzer, 1800);
+      } else {
+        noTone(pinBuzzer);
+      }
+    }
+
+  } else if (estadoConfirmado == "ALTO") {
     nivelSimulado       = 95;
     anguloObjetivo      = ANGULO_ABIERTO;
     alertaSequiaEmitida = false;
@@ -84,9 +135,7 @@ void loop() {
       buzzerSonando ? tone(pinBuzzer, 2400) : noTone(pinBuzzer);
     }
 
-  } else if (estadoMin == LOW) {
-    // --- NIVEL BAJO (D5): Cierra compuerta total + Pitido corto 400ms ---
-    estadoActual       = "BAJO";
+  } else if (estadoConfirmado == "BAJO") {
     nivelSimulado      = 15;
     anguloObjetivo     = ANGULO_CERRADO;
     alertaDesbordePrev = false;
@@ -102,8 +151,7 @@ void loop() {
     }
 
   } else {
-    // --- NIVEL NORMAL: Compuerta casi cerrada + Silencio ---
-    estadoActual   = "NORMAL";
+    // NORMAL
     nivelSimulado  = 50;
     anguloObjetivo = ANGULO_NORMAL;
 
@@ -115,43 +163,68 @@ void loop() {
     }
   }
 
-  // 2. MOVER SERVO SOLO SI CAMBIÓ EL ÁNGULO OBJETIVO
+  // 4. APLICAR CONTROL MANUAL SI EL OPERADOR LO ACTIVÓ DESDE EL PANEL WEB
+  if (modoControl == "ABRIR") {
+    anguloObjetivo = ANGULO_ABIERTO;
+  } else if (modoControl == "CERRAR") {
+    anguloObjetivo = ANGULO_CERRADO;
+  }
+
+  // 5. MOVER SERVO SOLO SI CAMBIÓ EL ÁNGULO
   if (anguloObjetivo != anguloActual) {
     compuerta.write(anguloObjetivo);
     anguloActual = anguloObjetivo;
-    Serial.println(">>> Servo movido a: " + String(anguloActual) + " grados (" + estadoActual + ")");
+    Serial.println(">>> Servo movido a: " + String(anguloActual) + "° (Modo: " + modoControl + ")");
   }
 
-  // 3. ENVÍO DE DATOS IOT (Al cambiar de estado o cada 3 segundos)
-  bool cambioDeEstado = (estadoActual != estadoPrevio);
-  if (cambioDeEstado || (tiempoActual - tiempoUltimoEnvio >= 3000)) {
-    estadoPrevio      = estadoActual;
-    tiempoUltimoEnvio = tiempoActual;
-    enviarDatosServidor(estadoActual, nivelSimulado, anguloActual);
+  // 6. TELEMETRÍA IOT (Al confirmar cambio de estado o cada 3 segundos como Heartbeat)
+  bool cambioConfirmado = (estadoConfirmado != estadoEnviadoPrevio);
+  if (cambioConfirmado || (tiempoActual - tiempoUltimoEnvio >= 3000)) {
+    estadoEnviadoPrevio = estadoConfirmado;
+    tiempoUltimoEnvio   = tiempoActual;
+    enviarDatosServidor(estadoConfirmado, nivelSimulado, anguloActual);
   }
 }
 
 void enviarDatosServidor(String estado, int nivel, int angulo) {
-  if (WiFi.status() == WL_CONNECTED) {
-    WiFiClient client;
-    HTTPClient http;
-
-    http.setTimeout(800);
-    http.begin(client, serverUrl);
-    http.addHeader("Content-Type", "application/json");
-
-    String jsonPayload = "{";
-    jsonPayload += "\"estado\":\"" + estado + "\",";
-    jsonPayload += "\"nivel\":" + String(nivel) + ",";
-    jsonPayload += "\"angulo\":" + String(angulo);
-    jsonPayload += "}";
-
-    int httpCode = http.POST(jsonPayload);
-    if (httpCode > 0) {
-      Serial.println("[IoT OK] Enviado: " + jsonPayload);
-    } else {
-      Serial.println("[IoT Error] No se pudo contactar al servidor");
-    }
-    http.end();
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("[Wi-Fi Error] Sin conexión, reintentando...");
+    WiFi.reconnect();
+    return;
   }
+
+  WiFiClient client;
+  HTTPClient http;
+
+  http.setTimeout(900);
+  http.begin(client, serverUrl);
+  http.addHeader("Content-Type", "application/json");
+
+  int rssi = WiFi.RSSI(); // Calidad de señal Wi-Fi en dBm
+  unsigned long uptimeSeg = millis() / 1000;
+
+  String jsonPayload = "{";
+  jsonPayload += "\"estado\":\"" + estado + "\",";
+  jsonPayload += "\"nivel\":" + String(nivel) + ",";
+  jsonPayload += "\"angulo\":" + String(angulo) + ",";
+  jsonPayload += "\"rssi\":" + String(rssi) + ",";
+  jsonPayload += "\"uptime\":" + String(uptimeSeg) + ",";
+  jsonPayload += "\"resetReason\":\"" + motivoReinicio + "\"";
+  jsonPayload += "}";
+
+  int httpCode = http.POST(jsonPayload);
+  if (httpCode > 0) {
+    String respuesta = http.getString();
+    // Leemos si el servidor envió una orden de control manual
+    if (respuesta.indexOf("\"ABRIR\"") != -1) {
+      modoControl = "ABRIR";
+    } else if (respuesta.indexOf("\"CERRAR\"") != -1) {
+      modoControl = "CERRAR";
+    } else if (respuesta.indexOf("\"AUTO\"") != -1) {
+      modoControl = "AUTO";
+    }
+  } else {
+    Serial.println("[IoT Error] Servidor inalcanzable");
+  }
+  http.end();
 }
