@@ -3,10 +3,10 @@
 #include <WiFiClient.h>
 #include <Servo.h>
 
-//Configuracion de red
-const char* ssid="UTN FRVM"; //nombre de la red donde trabajas
-const char* password="utnfrvm26"; //contraseña
-const char* serverUrl="http://000.000.000.000:3000/api/rio"; //poner la ip de la pc donde corre el servidor
+// Configuracion de red
+const char* ssid      = "UTN FRVM";
+const char* password  = "utnfrvm26";
+const char* serverUrl = "http://192.168.151.170:3000/api/rio";
 
 // --- PINES DE HARDWARE ---
 const int pinSensorMax = D1; // GPIO 5  -> Nivel Máximo (Desborde)
@@ -15,10 +15,10 @@ const int pinSensorMin = D5; // GPIO 14 -> Nivel Mínimo (Sequía)
 const int pinServo     = D6; // GPIO 12 -> Servomotor SG90
 
 // --- ÁNGULOS DE COMPUERTA ---
-const int ANGULO_CERRADO    = 0;
-const int ANGULO_NORMAL     = 35;
-const int ANGULO_FALLA_SEG  = 45;  // Posición segura si fallan los sensores
-const int ANGULO_ABIERTO    = 110;
+const int ANGULO_CERRADO   = 0;
+const int ANGULO_NORMAL    = 100;
+const int ANGULO_FALLA_SEG = 60;  // Posición segura si fallan los sensores
+const int ANGULO_ABIERTO   = 180;
 
 // --- FILTRO ANTI-OLEAJE (2 segundos sostenidos para confirmar cambio) ---
 const unsigned long TIEMPO_CONFIRMACION_MS = 2000;
@@ -26,16 +26,19 @@ const unsigned long TIEMPO_CONFIRMACION_MS = 2000;
 Servo compuerta;
 
 // Variables de estado y debounce
-String estadoCrudoPrevio    = "NORMAL";
-String estadoConfirmado     = "NORMAL";
-String estadoEnviadoPrevio  = "";
-String modoControl          = "AUTO"; // "AUTO", "ABRIR", "CERRAR"
-String motivoReinicio       = "";
+String estadoCrudoPrevio   = "NORMAL";
+String estadoConfirmado    = "NORMAL";
+String estadoEnviadoPrevio = "";
+String modoControl         = "AUTO"; // "AUTO", "ABRIR", "CERRAR"
+String motivoReinicio      = "";
 
 unsigned long tiempoCambioCrudo    = 0;
 unsigned long tiempoAnteriorBuzzer = 0;
 unsigned long tiempoInicioSequia   = 0;
 unsigned long tiempoUltimoEnvio    = 0;
+int fallosConsecutivos             = 0;
+bool servidorEnLinea               = false;
+unsigned long intervaloEnvio       = 3000; // 3s normal, sube a 10s si el servidor está apagado
 
 int anguloActual         = -1;
 int pasoPitidoFalla      = 0;
@@ -51,7 +54,6 @@ void setup() {
   pinMode(pinBuzzer, OUTPUT);
   noTone(pinBuzzer);
 
-  // Guardamos el motivo del último reinicio (útil para detectar caídas por el servo)
   motivoReinicio = ESP.getResetReason();
 
   compuerta.attach(pinServo);
@@ -87,10 +89,9 @@ void loop() {
   // 2. FILTRO ANTI-OLEAJE (Debounce temporal)
   if (estadoCrudo != estadoCrudoPrevio) {
     estadoCrudoPrevio = estadoCrudo;
-    tiempoCambioCrudo = tiempoActual; // Reinicia el cronómetro si hubo rebote u ola
+    tiempoCambioCrudo = tiempoActual;
   }
 
-  // Solo confirma el nuevo estado si se mantuvo estable durante TIEMPO_CONFIRMACION_MS
   if ((tiempoActual - tiempoCambioCrudo) >= TIEMPO_CONFIRMACION_MS) {
     if (estadoConfirmado != estadoCrudo) {
       estadoConfirmado = estadoCrudo;
@@ -108,7 +109,6 @@ void loop() {
     alertaDesbordePrev  = false;
     alertaSequiaEmitida = false;
 
-    // Patrón de alarma de falla: 3 pitidos cortos cada 2 segundos
     if (tiempoActual - tiempoAnteriorBuzzer >= 250) {
       tiempoAnteriorBuzzer = tiempoActual;
       pasoPitidoFalla = (pasoPitidoFalla + 1) % 8;
@@ -177,9 +177,9 @@ void loop() {
     Serial.println(">>> Servo movido a: " + String(anguloActual) + "° (Modo: " + modoControl + ")");
   }
 
-  // 6. TELEMETRÍA IOT (Al confirmar cambio de estado o cada 3 segundos como Heartbeat)
+  // 6. TELEMETRÍA IOT (Al confirmar cambio de estado o según intervaloEnvio)
   bool cambioConfirmado = (estadoConfirmado != estadoEnviadoPrevio);
-  if (cambioConfirmado || (tiempoActual - tiempoUltimoEnvio >= 3000)) {
+  if (cambioConfirmado || (tiempoActual - tiempoUltimoEnvio >= intervaloEnvio)) {
     estadoEnviadoPrevio = estadoConfirmado;
     tiempoUltimoEnvio   = tiempoActual;
     enviarDatosServidor(estadoConfirmado, nivelSimulado, anguloActual);
@@ -188,7 +188,10 @@ void loop() {
 
 void enviarDatosServidor(String estado, int nivel, int angulo) {
   if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("[Wi-Fi Error] Sin conexión, reintentando...");
+    if (servidorEnLinea) {
+      Serial.println("[Wi-Fi] Conexión perdida. Operando en modo local autónomo...");
+      servidorEnLinea = false;
+    }
     WiFi.reconnect();
     return;
   }
@@ -200,7 +203,7 @@ void enviarDatosServidor(String estado, int nivel, int angulo) {
   http.begin(client, serverUrl);
   http.addHeader("Content-Type", "application/json");
 
-  int rssi = WiFi.RSSI(); // Calidad de señal Wi-Fi en dBm
+  int rssi = WiFi.RSSI();
   unsigned long uptimeSeg = millis() / 1000;
 
   String jsonPayload = "{";
@@ -213,9 +216,16 @@ void enviarDatosServidor(String estado, int nivel, int angulo) {
   jsonPayload += "}";
 
   int httpCode = http.POST(jsonPayload);
+
   if (httpCode > 0) {
+    if (!servidorEnLinea) {
+      Serial.println("[IoT OK] Servidor conectado y recibiendo telemetría.");
+      servidorEnLinea = true;
+    }
+    fallosConsecutivos = 0;
+    intervaloEnvio = 3000;
+
     String respuesta = http.getString();
-    // Leemos si el servidor envió una orden de control manual
     if (respuesta.indexOf("\"ABRIR\"") != -1) {
       modoControl = "ABRIR";
     } else if (respuesta.indexOf("\"CERRAR\"") != -1) {
@@ -223,8 +233,18 @@ void enviarDatosServidor(String estado, int nivel, int angulo) {
     } else if (respuesta.indexOf("\"AUTO\"") != -1) {
       modoControl = "AUTO";
     }
+
   } else {
-    Serial.println("[IoT Error] Servidor inalcanzable");
+    fallosConsecutivos++;
+
+    if (fallosConsecutivos == 1) {
+      Serial.println("[IoT] Servidor en espera (" + http.errorToString(httpCode) + "). Reintentando...");
+    } else if (fallosConsecutivos == 3) {
+      Serial.println("[IoT Error] Servidor inalcanzable. Pasando a reintentos cada 10s.");
+      servidorEnLinea = false;
+      intervaloEnvio = 10000;
+    }
   }
+
   http.end();
 }
