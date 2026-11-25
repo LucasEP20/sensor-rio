@@ -1,32 +1,1456 @@
 {
   "historial": [
     {
-      "hora": "06:11:03",
+      "hora": "07:38:41",
       "estado": "NORMAL",
       "nivel": 50,
-      "angulo": 35
+      "angulo": 100
+    },
+    {
+      "hora": "07:38:43",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:38:47",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:38:49",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:38:52",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:38:55",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:38:59",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:01",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:05",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:07",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:10",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:13",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:16",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:20",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:23",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:25",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:28",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:31",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:35",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:37",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:41",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:44",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:46",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:49",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:39:53",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:01",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:05",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:07",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:11",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:13",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:16",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:19",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:23",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:26",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:28",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:32",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:35",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:38",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:40",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:43",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:47",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:50",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:52",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:55",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:40:58",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:02",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:04",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:07",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:10",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:13",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:16",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:20",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:23",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:26",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:28",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:31",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:34",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:37",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:41",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:43",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:47",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:50",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:53",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:56",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:41:58",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:01",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:04",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:08",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:10",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:14",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:17",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:20",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:22",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:25",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:28",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:31",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:34",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:38",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:41",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:44",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:46",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:49",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:52",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:55",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:42:58",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:01",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:04",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:11",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:12",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:14",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:17",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:23",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:26",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:29",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:32",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:34",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:38",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:41",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:44",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:47",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:50",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:52",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:55",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:43:59",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:02",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:04",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:08",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:10",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:13",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:16",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:20",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:22",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:26",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:29",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:31",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:35",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:38",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:40",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:43",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:47",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:50",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:52",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:55",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:44:58",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:17",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:20",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:24",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:26",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:29",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:32",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:36",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:39",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:41",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:44",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:47",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:50",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:53",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:45:57",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:00",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:03",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:05",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:09",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:12",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:15",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:17",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:21",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:24",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:26",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:30",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:33",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:36",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:38",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:41",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:45",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:48",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:51",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:53",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:57",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:46:59",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:03",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:06",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:08",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:11",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:14",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:17",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:20",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:23",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:27",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:30",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:33",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:36",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:38",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:42",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:44",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:48",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:50",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:53",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:47:57",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:00",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:03",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:06",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:09",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:12",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:14",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:18",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:21",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:23",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:26",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:29",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:33",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:36",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:39",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:41",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:44",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:47",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:50",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:53",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:56",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:48:59",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
+    },
+    {
+      "hora": "07:49:02",
+      "estado": "NORMAL",
+      "nivel": 50,
+      "angulo": 100
     }
   ],
   "eventos": [
     {
-      "hora": "06:39:04",
+      "hora": "07:45:34",
       "tipo": "NORMAL",
       "mensaje": "✨ DIAGNÓSTICO IA: Evaluación hidrológica y pluvial generada con Gemini"
     },
     {
-      "hora": "06:11:53",
+      "hora": "07:45:17",
+      "tipo": "ONLINE",
+      "mensaje": "🟢 CONEXIÓN ESTABLECIDA: Nodo sensor en línea enviando telemetría"
+    },
+    {
+      "hora": "07:40:01",
+      "tipo": "ONLINE",
+      "mensaje": "🟢 CONEXIÓN ESTABLECIDA: Nodo sensor en línea enviando telemetría"
+    },
+    {
+      "hora": "07:37:26",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:37:23",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:37:04",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:36:59",
+      "tipo": "ONLINE",
+      "mensaje": "🟢 CONEXIÓN ESTABLECIDA: Nodo sensor en línea enviando telemetría"
+    },
+    {
+      "hora": "07:36:34",
+      "tipo": "OFFLINE",
+      "mensaje": "🔌 PÉRDIDA DE TELEMETRÍA: El sensor dejó de enviar datos (revisar Wi-Fi o alimentación)"
+    },
+    {
+      "hora": "07:35:10",
+      "tipo": "ONLINE",
+      "mensaje": "🟢 CONEXIÓN ESTABLECIDA: Nodo sensor en línea enviando telemetría"
+    },
+    {
+      "hora": "07:34:43",
+      "tipo": "OFFLINE",
+      "mensaje": "🔌 PÉRDIDA DE TELEMETRÍA: El sensor dejó de enviar datos (revisar Wi-Fi o alimentación)"
+    },
+    {
+      "hora": "07:34:29",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:34:25",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:34:21",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:34:17",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:34:12",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:33:55",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:33:53",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:33:29",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:33:27",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:32:13",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:32:09",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:22:27",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:22:17",
+      "tipo": "FALLA_SENSOR",
+      "mensaje": "🔧 FALLA DE HARDWARE: Sensores D1 y D5 activos en simultáneo — Compuerta a 60°"
+    },
+    {
+      "hora": "07:20:52",
       "tipo": "NORMAL",
       "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"AUTO\""
     },
     {
-      "hora": "06:11:43",
+      "hora": "07:20:06",
       "tipo": "NORMAL",
       "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"ABRIR\""
     },
     {
-      "hora": "06:11:36",
+      "hora": "07:19:54",
       "tipo": "NORMAL",
       "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"CERRAR\""
+    },
+    {
+      "hora": "07:19:50",
+      "tipo": "NORMAL",
+      "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"ABRIR\""
+    },
+    {
+      "hora": "07:19:42",
+      "tipo": "NORMAL",
+      "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"AUTO\""
+    },
+    {
+      "hora": "07:19:36",
+      "tipo": "NORMAL",
+      "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"CERRAR\""
+    },
+    {
+      "hora": "07:19:32",
+      "tipo": "NORMAL",
+      "mensaje": "🎛️ CONTROL OPERADOR: Modo de compuerta cambiado a \"ABRIR\""
+    },
+    {
+      "hora": "07:17:12",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:17:09",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:17:06",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:17:03",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:16:59",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:16:55",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:16:20",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:16:16",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:16:12",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:15:26",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:15:24",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:15:21",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:15:16",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:14:36",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:14:33",
+      "tipo": "ALTO",
+      "mensaje": "🚨 DESBORDE CONFIRMADO (95 cm) — Compuerta a 180°"
+    },
+    {
+      "hora": "07:14:19",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:14:16",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:13:36",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
+    },
+    {
+      "hora": "07:13:34",
+      "tipo": "BAJO",
+      "mensaje": "⚠️ SEQUÍA CONFIRMADA (15 cm) — Compuerta cerrada a 0°"
+    },
+    {
+      "hora": "07:13:21",
+      "tipo": "NORMAL",
+      "mensaje": "✅ CAUDAL NORMALIZADO (50 cm) — Compuerta a 100°"
     }
   ]
 }
